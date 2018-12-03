@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="IO," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="All is blocking从严格意义上说，所有的请求都是阻塞的，原因是所有的请求发出去之后都会等待，只是等待时长多少而已，这点希望大家明白。阻塞与非阻塞实际上就是阻塞的时间长短不同。 Blocking vs Non-Blocking两者不同之处在于请求（或方法调用）无法正常处理时的行为:    Blocking-mode：客户端线程会一直阻塞等待返回； Non-Blocking: 服务端会立即">
+<meta name="keywords" content="IO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Java NIO">
+<meta property="og:url" content="http://blog.lovezhangli.top/2018/09/26/nio/index.html">
+<meta property="og:site_name" content="Xu He&#39;s blog">
+<meta property="og:description" content="All is blocking从严格意义上说，所有的请求都是阻塞的，原因是所有的请求发出去之后都会等待，只是等待时长多少而已，这点希望大家明白。阻塞与非阻塞实际上就是阻塞的时间长短不同。 Blocking vs Non-Blocking两者不同之处在于请求（或方法调用）无法正常处理时的行为:    Blocking-mode：客户端线程会一直阻塞等待返回； Non-Blocking: 服务端会立即">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.lovezhangli.top/pics/blocking.png">
+<meta property="og:image" content="http://blog.lovezhangli.top/pics/non-blocking.png">
+<meta property="og:updated_time" content="2018-10-19T10:16:27.359Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Java NIO">
+<meta name="twitter:description" content="All is blocking从严格意义上说，所有的请求都是阻塞的，原因是所有的请求发出去之后都会等待，只是等待时长多少而已，这点希望大家明白。阻塞与非阻塞实际上就是阻塞的时间长短不同。 Blocking vs Non-Blocking两者不同之处在于请求（或方法调用）无法正常处理时的行为:    Blocking-mode：客户端线程会一直阻塞等待返回； Non-Blocking: 服务端会立即">
+<meta name="twitter:image" content="http://blog.lovezhangli.top/pics/blocking.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.lovezhangli.top/2018/09/26/nio/"/>
+
+
+
+
+
+  <title>深入理解Java NIO | Xu He's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Xu He's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/26/nio/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Xu He">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/xuhe.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Xu He's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Java NIO</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-26T14:33:01+08:00">
+                2018-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="All-is-blocking"><a href="#All-is-blocking" class="headerlink" title="All is blocking"></a>All is blocking</h3><p>从严格意义上说，所有的请求都是阻塞的，原因是所有的请求发出去之后都会等待，只是等待时长多少而已，这点希望大家明白。<br>阻塞与非阻塞实际上就是阻塞的时间长短不同。</p>
+<h3 id="Blocking-vs-Non-Blocking"><a href="#Blocking-vs-Non-Blocking" class="headerlink" title="Blocking vs Non-Blocking"></a>Blocking vs Non-Blocking</h3><p>两者不同之处在于请求（或方法调用）无法正常处理时的行为:</p>
+<blockquote>
+</blockquote>
+<ul>
+<li>Blocking-mode：客户端线程会一直阻塞等待返回；</li>
+<li>Non-Blocking: 服务端会立即返回，通知客户端线程无法处理，客户端线程不会阻塞；</li>
+</ul>
+<a id="more"></a>
+<p>时序图如下：</p>
+<p>  <img src="http://blog.lovezhangli.top/pics/blocking.png" alt=""><br>  <img src="http://blog.lovezhangli.top/pics/non-blocking.png" alt=""></p>
+<h3 id="BIO-vs-NIO"><a href="#BIO-vs-NIO" class="headerlink" title="BIO vs NIO"></a>BIO vs NIO</h3><p>BIO，就是传统的基于流的IO操作，所有基于流的操作都是阻塞的：</p>
+<blockquote>
+</blockquote>
+<ul>
+<li>使用server socket启动一个服务后，服务器是阻塞的，等待客户端连接；</li>
+<li>客户端服务端分别基于socket新建输入输出流，基于流的读写也是阻塞的，如果流中没有可读数据，读操作阻塞，写操作阻塞等待数据写完。</li>
+</ul>
+<p>关键代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public class Server &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            ServerSocket serverSocket = new ServerSocket(8888);</span><br><span class="line">            Socket socket = serverSocket.accept(); // 阻塞，等待client连接</span><br><span class="line">            System.out.println(&quot;a client connected&quot;);</span><br><span class="line">            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());</span><br><span class="line">            Thread.sleep(10000l); // 阻塞client</span><br><span class="line">            dos.writeUTF(&quot;hello client&quot;);</span><br><span class="line">            dos.writeUTF(&quot;I am server&quot;); // 写也阻塞，好像是异步(macOS)</span><br><span class="line">            System.out.println(&quot;do next thing&quot;);</span><br><span class="line">            dos.flush();</span><br><span class="line">            dos.close();</span><br><span class="line">            socket.close();</span><br><span class="line">            serverSocket.close();</span><br><span class="line"></span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Client &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Socket socket = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            socket = new Socket(&quot;localhost&quot;, 8888);</span><br><span class="line">            DataInputStream dis = new DataInputStream(socket.getInputStream());</span><br><span class="line">            System.out.println(dis.readUTF()); //阻塞，等待有数据写入</span><br><span class="line">            Thread.sleep(10000l);</span><br><span class="line">            System.out.println(dis.readUTF()); //阻塞，等待有数据写入</span><br><span class="line">            System.out.println(&quot;do next thing&quot;);</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>NIO，new IO，但更确切的称呼是 non-block IO，基于channel数据读写都是非阻塞的(blocking-mode:false）：</p>
+<blockquote>
+<ul>
+<li>服务端采用selector(多路复用器)轮训每个channel的事件；</li>
+<li>当channel中无可读数据时，读操作立刻返回空，不会阻塞;</li>
+</ul>
+</blockquote>
+<p>关键代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">private static void query(String host) throws IOException &#123;</span><br><span class="line">    InetSocketAddress isa</span><br><span class="line">            = new InetSocketAddress(InetAddress.getByName(host), port);</span><br><span class="line">    SocketChannel sc = null;</span><br><span class="line">    // Direct byte buffer for reading</span><br><span class="line">    ByteBuffer dbuf = ByteBuffer.allocateDirect(1024);</span><br><span class="line">    try &#123;</span><br><span class="line"></span><br><span class="line">        // Connect</span><br><span class="line">        sc = SocketChannel.open();</span><br><span class="line">        sc.configureBlocking(false); //</span><br><span class="line">        sc.connect(isa); // non-blocking: connect() return right now, may fail to connect, must call next step</span><br><span class="line">        sc.finishConnect();</span><br><span class="line">        System.out.println(sc.isBlocking());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        // Read the time from the remote host.  For simplicity we assume</span><br><span class="line">        // that the time comes back to us in a single packet, so that we</span><br><span class="line">        // only need to read once.</span><br><span class="line">        dbuf.clear();</span><br><span class="line">        sc.read(dbuf); // non-block: 立即返回， block: 阻塞直到读取到内容</span><br><span class="line">        // Print the remote address and the received time</span><br><span class="line">        dbuf.flip();  // 复位，读操作需要复位</span><br><span class="line">        CharBuffer cb = decoder.decode(dbuf);</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + &quot; : &quot; + cb);</span><br><span class="line"></span><br><span class="line">        System.out.println(Thread.currentThread().getName() + &quot;: Do next thing&quot;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        // Make sure we close the channel (and hence the socket)</span><br><span class="line">        if (sc != null)</span><br><span class="line">            sc.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">    private static void acceptConnections(int port) throws Exception &#123;</span><br><span class="line">    // Selector for incoming time requests</span><br><span class="line">    Selector acceptSelector = SelectorProvider.provider().openSelector();</span><br><span class="line"></span><br><span class="line">    // Create a new server socket and set to non blocking mode</span><br><span class="line">    ServerSocketChannel ssc = ServerSocketChannel.open();</span><br><span class="line">    ssc.configureBlocking(false);</span><br><span class="line"></span><br><span class="line">    // todo: multiply serverSocketChannel ?</span><br><span class="line">    ServerSocketChannel ssc1 = ServerSocketChannel.open();</span><br><span class="line">    ssc1.configureBlocking(false);</span><br><span class="line">    // 只有一个ServerSocketChannel</span><br><span class="line">    System.out.println(&quot;ssc: &quot; + ssc);</span><br><span class="line">    System.out.println(&quot;ssc1: &quot; + ssc1);</span><br><span class="line">    // Bind the server socket to the local host and port</span><br><span class="line"></span><br><span class="line">    InetAddress lh = InetAddress.getLocalHost();</span><br><span class="line">    InetSocketAddress isa = new InetSocketAddress(lh, port);</span><br><span class="line">    ssc.socket().bind(isa);</span><br><span class="line"></span><br><span class="line">    // Register accepts on the server socket with the selector. This</span><br><span class="line">    // step tells the selector that the socket wants to be put on the</span><br><span class="line">    // ready list when accept operations occur, so allowing multiplexed</span><br><span class="line">    // non-blocking I/O to take place.</span><br><span class="line">    SelectionKey acceptKey = ssc.register(acceptSelector,</span><br><span class="line">            SelectionKey.OP_ACCEPT);</span><br><span class="line"></span><br><span class="line">    // selectionKey represent the registration of a selectable channel</span><br><span class="line">    System.out.println(acceptKey);</span><br><span class="line"></span><br><span class="line">    ssc1.register(acceptSelector, SelectionKey.OP_ACCEPT);</span><br><span class="line"></span><br><span class="line">    int keysAdded = 0;</span><br><span class="line">    System.out.println(&quot;waiting connecting....&quot;);</span><br><span class="line">    // Here&apos;s where everything happens. The select method will</span><br><span class="line">    // return when any operations registered above have occurred, the</span><br><span class="line">    // thread has been interrupted, etc.</span><br><span class="line"></span><br><span class="line">    while ((keysAdded = acceptSelector.select()) &gt; 0) &#123;</span><br><span class="line">        System.out.println(keysAdded);</span><br><span class="line">        // Someone is ready for I/O, get the ready keys</span><br><span class="line">        Set readyKeys = acceptSelector.selectedKeys();</span><br><span class="line">        Iterator i = readyKeys.iterator();</span><br><span class="line"></span><br><span class="line">        // Walk through the ready keys collection and process date requests.</span><br><span class="line">        while (i.hasNext()) &#123;</span><br><span class="line">            SelectionKey sk = (SelectionKey)i.next();</span><br><span class="line">            System.out.println(sk); // equal to acceptKey</span><br><span class="line">            i.remove();</span><br><span class="line">            // The key indexes into the selector so you</span><br><span class="line">            // can retrieve the socket that&apos;s ready for I/O</span><br><span class="line">            ServerSocketChannel nextReady =</span><br><span class="line">                    (ServerSocketChannel)sk.channel();</span><br><span class="line">            System.out.println(&quot;nextReady: &quot; + nextReady);</span><br><span class="line">            // Accept the date request and send back the date string</span><br><span class="line">            Date now = new Date();</span><br><span class="line">            // write the current timestamp to buffer</span><br><span class="line">            ByteBuffer writeBuf = ByteBuffer.allocateDirect(1024);</span><br><span class="line">            writeBuf.putLong(now.getTime());</span><br><span class="line"></span><br><span class="line">            SocketChannel socketChannel = nextReady.accept();</span><br><span class="line">            socketChannel.configureBlocking(false);</span><br><span class="line">           // Thread.sleep(10000l); // block client, client won&apos;t block</span><br><span class="line">            // socketChannel.write(encoder.encode(CharBuffer.wrap(now.toString() + &quot;\r\n&quot;)));</span><br><span class="line">            StringBuffer sb = new StringBuffer(now.toString());</span><br><span class="line">            for (int j = 0; j &lt; 1000; j++) &#123;</span><br><span class="line">                sb.append(now.toString());</span><br><span class="line">            &#125;</span><br><span class="line">            int written = socketChannel.write(encoder.encode(CharBuffer.wrap(sb.toString() + &quot;\r\n&quot;)));</span><br><span class="line">            System.out.println(&quot;written: &quot; + written);</span><br><span class="line">            System.out.println(&quot;Do next thing&quot;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/IO/" rel="tag"># IO</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/26/miss-my-baby/" rel="prev" title="甜蜜的负担">
+                甜蜜的负担 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/xuhe.jpeg"
+               alt="Xu He" />
+          <p class="site-author-name" itemprop="name">Xu He</p>
+           
+              <p class="site-description motion-element" itemprop="description">Christian, Husband, Father, Software Engineer</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://martinfowler.com/" title="Martinfowler" target="_blank">Martinfowler</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://microservices.io/" title="Chris Richardson" target="_blank">Chris Richardson</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tutorials.jenkov.com" title="Jenkov.com" target="_blank">Jenkov.com</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://wiki.jikexueyuan.com/" title="jike-wiki" target="_blank">jike-wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://crossoverjie.top/" title="Crossoverjie" target="_blank">Crossoverjie</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#All-is-blocking"><span class="nav-number">1.</span> <span class="nav-text">All is blocking</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Blocking-vs-Non-Blocking"><span class="nav-number">2.</span> <span class="nav-text">Blocking vs Non-Blocking</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BIO-vs-NIO"><span class="nav-number">3.</span> <span class="nav-text">BIO vs NIO</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Xu He</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
