@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java,tool," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="背景面试高开的同学都知道，面试官一般会问jvm问题排查和优化：比如线上内存泄漏如何发现，jvm如何调优等等。2周前打算去面试一个java开发经理的岗位，友好的猎头把之前面试者的遇到的题目发给了我:  1、java内存模型；2、hashmap和arrayList扩容的原理；3、常用的线程池有哪些；4、数据库慢查询的优化；5、如何设计索引；6、数据库的事务隔离级别有哪些；7、mybatis 和hibe">
+<meta name="keywords" content="java,tool">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VisualVM使用的坑">
+<meta property="og:url" content="http://blog.lovezhangli.top/2019/01/10/java-troubleshooting-visualvm/index.html">
+<meta property="og:site_name" content="Xu He&#39;s blog">
+<meta property="og:description" content="背景面试高开的同学都知道，面试官一般会问jvm问题排查和优化：比如线上内存泄漏如何发现，jvm如何调优等等。2周前打算去面试一个java开发经理的岗位，友好的猎头把之前面试者的遇到的题目发给了我:  1、java内存模型；2、hashmap和arrayList扩容的原理；3、常用的线程池有哪些；4、数据库慢查询的优化；5、如何设计索引；6、数据库的事务隔离级别有哪些；7、mybatis 和hibe">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.lovezhangli.top/pics/jps.jpeg">
+<meta property="og:updated_time" content="2019-01-18T07:09:54.023Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VisualVM使用的坑">
+<meta name="twitter:description" content="背景面试高开的同学都知道，面试官一般会问jvm问题排查和优化：比如线上内存泄漏如何发现，jvm如何调优等等。2周前打算去面试一个java开发经理的岗位，友好的猎头把之前面试者的遇到的题目发给了我:  1、java内存模型；2、hashmap和arrayList扩容的原理；3、常用的线程池有哪些；4、数据库慢查询的优化；5、如何设计索引；6、数据库的事务隔离级别有哪些；7、mybatis 和hibe">
+<meta name="twitter:image" content="http://blog.lovezhangli.top/pics/jps.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":true},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.lovezhangli.top/2019/01/10/java-troubleshooting-visualvm/"/>
+
+
+
+
+
+  <title>VisualVM使用的坑 | Xu He's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Xu He's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2019/01/10/java-troubleshooting-visualvm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Xu He">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/xuhe.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Xu He's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VisualVM使用的坑</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-10T18:30:41+08:00">
+                2019-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>面试高开的同学都知道，面试官一般会问jvm问题排查和优化：比如线上内存泄漏如何发现，jvm如何调优等等。2周前打算去面试一个java开发经理的岗位，友好的猎头把之前面试者的遇到的题目发给了我:</p>
+<blockquote>
+<p>1、java内存模型；<br><br>2、hashmap和arrayList扩容的原理；<br><br>3、常用的线程池有哪些；<br><br>4、数据库慢查询的优化；<br><br>5、如何设计索引；<br><br>6、数据库的事务隔离级别有哪些；<br><br>7、mybatis 和hibernate的区别，使用场景；<br><br>8、什么是内存泄漏，线程死锁；<br><br>9、内存泄漏如何诊断。</p>
+</blockquote>
+<h3 id="常用工具"><a href="#常用工具" class="headerlink" title="常用工具"></a>常用工具</h3><ul>
+<li><p>jdk官方提供的</p>
+<blockquote>
+<ol>
+<li>jconsole <br></li>
+<li>visualVM <br></li>
+</ol>
+</blockquote>
+</li>
+<li><p>第三方的，如 MAT</p>
+</li>
+</ul>
+<h3 id="VisualVM使用遇到的坑"><a href="#VisualVM使用遇到的坑" class="headerlink" title="VisualVM使用遇到的坑"></a>VisualVM使用遇到的坑</h3><ul>
+<li><p>远程服务器启动jstatd，报错</p>
+<blockquote>
+<p>Could not create remote object<br>  access denied (“java.util.PropertyPermission” “java.rmi.server.ignoreSubClasses” “write”)<br>  java.security.AccessControlException: access denied (“java.util.PropertyPermission” “java.rmi.server.ignoreSubClasses” “write”)</p>
+<pre><code>at java.security.AccessControlContext.checkPermission(AccessControlContext.java:472)
+at java.security.AccessController.checkPermission(AccessController.java:884)
+at java.lang.SecurityManager.checkPermission(SecurityManager.java:549)
+at java.lang.System.setProperty(System.java:792)
+at sun.tools.jstatd.Jstatd.main(Jstatd.java:139)
+</code></pre></blockquote>
+</li>
+<li><p>查看oracle官网，或者 <code>man jstatd</code></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  grant codebase &quot;file:$&#123;java.home&#125;/../lib/tools.jar&quot; &#123;</span><br><span class="line">          permission java.security.AllPermission;</span><br><span class="line">      &#125;;</span><br><span class="line">	</span><br><span class="line">...	</span><br><span class="line">  jstatd -J-Djava.security.policy=jstatd.all.policy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动visualVM，新建远程主机，无反应，可ping通，也可telnet，纠结了很久。</p>
+</li>
+<li><p>jps 10.23.54.41</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Error communicating with remote host: Connection refused to host: 127.0.0.1; nested exception is:</span><br><span class="line">	java.net.ConnectException: Connection refused (Connection refused)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动jstatd，指定hostname后，成功连接到远程主机。</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstatd -J-Djava.security.policy=tools.policy  -J-Djava.rmi.server.hostname=10.23.54.41  &amp;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>jps 成功， visualVM连接成功！</p>
+<p>  <img src="http://blog.lovezhangli.top/pics/jps.jpeg" alt=""></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/tool/" rel="tag"># tool</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/25/hello-2019/" rel="next" title="Hello 2019">
+                <i class="fa fa-chevron-left"></i> Hello 2019
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/02/a-http-timeout-md/" rel="prev" title="记一次httpClient超时引发的消息堆积">
+                记一次httpClient超时引发的消息堆积 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+      <div id="sidebar-dimmer"></div>
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/xuhe.jpeg"
+               alt="Xu He" />
+          <p class="site-author-name" itemprop="name">Xu He</p>
+           
+              <p class="site-description motion-element" itemprop="description">Christian, Husband, Father, Software Engineer</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://martinfowler.com/" title="Martinfowler" target="_blank">Martinfowler</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://microservices.io/" title="Chris Richardson" target="_blank">Chris Richardson</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tutorials.jenkov.com" title="Jenkov.com" target="_blank">Jenkov.com</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://wiki.jikexueyuan.com/" title="jike-wiki" target="_blank">jike-wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://crossoverjie.top/" title="Crossoverjie" target="_blank">Crossoverjie</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用工具"><span class="nav-number">2.</span> <span class="nav-text">常用工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VisualVM使用遇到的坑"><span class="nav-number">3.</span> <span class="nav-text">VisualVM使用遇到的坑</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Xu He</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -42,22 +42,22 @@ tags: J2EE
 
     ```
     
-	<p></p>
     
 * cookie定义(wikipedia)
     > <p>An HTTP cookie (also called web cookie, Internet cookie, browser cookie, or simply cookie) is a small piece of data sent from a website and stored on the user's computer by the user's web browser while the user is browsing.
-        </p>
+    </p>
 
-      cookie是由服务端发送过来，浏览器存储的数据片 
+    >  cookie是由服务端发送过来，浏览器存储的数据片 
          
 	<p></p>
 	
-    * 结论：
+* 结论：
 
-        session 需要服务端新建后，将id放入cookie里发送到客户端，客户端下次请求放入头部传到服务器端来验证是否是统一会话
-        修改代码
+     >   session 需要服务端新建后，将id放入cookie里发送到客户端，客户端下次请求放入头部传到服务器端来验证是否是同一会话。
+      
+    现修改代码：
         
-        ```
+    ```
         @GetMapping("/versions")
         public ResponseEntity selectAll(@RequestParam("device_type") String device_type, HttpServletRequest request) {
             System.out.println(request.getClass()); // class org.eclipse.jetty.server.Request
@@ -76,29 +76,27 @@ tags: J2EE
             List<OTAVersion> otaVersionList = otaVersionMapper.selectByExample(example);
             return Ok.newOk(otaVersionList, HttpStatus.OK);
         }
-        ```
-        
-        首次请求：
-        
-        ```
-        Request Cookies
-        Response Cookies
-        JSESSIONID	lelbt581q3ytnl16p06mpl0r
-        ```
-        
-        刷新后：
-        
-        ```
-        Request Cookies
-        JSESSIONID	lelbt581q3ytnl16p06mpl0r
-        Response Cookies
+    ```
 
-        ```
+    首次请求：
         
-        只是手动创建了session，JSESSIONID是如何放入cookie发送到客户端的呢？跟踪代码
-        `org.eclipse.jetty.server.Request`
+    >  Request Cookies <br>
+    >  Response Cookies <br>
+    >  JSESSIONID	lelbt581q3ytnl16p06mpl0r<br>
+    
+    刷新后：
+        
+    >    Request Cookies<br>
+    >    JSESSIONID	lelbt581q3ytnl16p06mpl0r<br>
+    >    Response Cookies<br>
 
-        ```
+    
+        
+* session如何关联cookie
+    
+    跟踪代码 `org.eclipse.jetty.server.Request`
+
+    ```
         public class Request implements HttpServletRequest
         {
 
@@ -137,9 +135,8 @@ tags: J2EE
 
                 return _session;
             }
-        ```
-        
-        ```
+            .....
+
             @Override
             public HttpCookie getSessionCookie(HttpSession session, String contextPath, boolean requestIsSecure)
             {
@@ -178,5 +175,5 @@ tags: J2EE
                 }
                 return null;
             }
-        ```
+    ```
 

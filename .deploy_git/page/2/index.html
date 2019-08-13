@@ -273,7 +273,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/02/eureka-HA/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/11/29/redis-distributed-lock/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -292,7 +292,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/10/02/eureka-HA/" itemprop="url">Eureka-HA</a></h1>
+                <a class="post-title-link" href="/2018/11/29/redis-distributed-lock/" itemprop="url">redis-distributed-lock</a></h1>
         
 
         <div class="post-meta">
@@ -304,8 +304,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-02T10:55:56+08:00">
-                2018-10-02
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-29T18:24:37+08:00">
+                2018-11-29
               </time>
             
 
@@ -343,12 +343,277 @@
 
       
         
-          <p>好吧，我承认，我一旦学习起来会上瘾的，连我自己都害怕（此处有装逼嫌疑）！</p>
-<p>昨天搭建的微服务框架，最后留了个TODO LIST里面提到HA(high Availability)，最后没控制住自己，晚上还是搞起来了。</p>
-<p>刚刚跑起来，趁着热，就写进了博客，记录下再这个过程踩过的坑：<br>
+          
+            <ul>
+<li>锁，用来解决多线程共享资源的问题</li>
+<li>分布式锁， 用来解决多个进程共享资源的问题</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/11/29/redis-thread-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Xu He">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/xuhe.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Xu He's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/redis-thread-model/" itemprop="url">redis 线程模型</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-29T18:24:18+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ul>
+<li><p>NIO两种方式</p>
+<blockquote>
+<p>a thread loop ServerSocketChannel with a selector</p>
+</blockquote>
+<blockquote>
+<p>a accept thread  + a worker thread with a selector</p>
+</blockquote>
+</li>
+<li><p>线程安全</p>
+<blockquote>
+<p>单线程，任何时刻，只能执行一个命令</p>
+</blockquote>
+<blockquote>
+<p>原子型，任何命令都是原子操作</p>
+</blockquote>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/19/nio-buffer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Xu He">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/xuhe.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Xu He's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/19/nio-buffer/" itemprop="url">NIO之buffer</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-19T15:01:37+08:00">
+                2018-10-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="Buffer分类"><a href="#Buffer分类" class="headerlink" title="Buffer分类"></a>Buffer分类</h3><p>ByteBuffer官方文档：</p>
+<blockquote>
+ <p>A byte buffer is either direct or non-direct. Given a direct byte buffer, the Java virtual machine will make a best effort to perform native I/O operations directly upon it.  That is, it will attempt to avoid copying the buffer’s content to (or from) an intermediate buffer before (or after) each invocation of one of the underlying operating system’s native I/O operations.</p>
+</blockquote>
+<p>根据文档，可将buffer分为两种：    </p>
+<ul>
+<li>Direct: java heap内存</li>
+<li>Non-Direct:堆外内存
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/10/02/eureka-HA/#more" rel="contents">
+            <a class="btn" href="/2018/10/19/nio-buffer/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -399,7 +664,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/01/gateway-success/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/10/load-balance/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -418,7 +683,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/10/01/gateway-success/" itemprop="url">Spring cloud —— Zuul</a></h1>
+                <a class="post-title-link" href="/2018/10/10/load-balance/" itemprop="url">load-balance</a></h1>
         
 
         <div class="post-meta">
@@ -430,135 +695,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-01T11:28:11+08:00">
-                2018-10-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>在这普天同庆的日子，祝祖国生日快乐！</p>
-<p>下面我宣布个重磅消息：</p>
-<p>经过2天的努力，终于在昨天晚上8点多，成功搭建了公司的微服务架构，成就感满满，mark下，哈哈😄</p>
-<p>下面就重点介绍下思路：<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/10/01/gateway-success/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/network-protocal-tcp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Xu He">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/xuhe.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Xu He's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/27/network-protocal-tcp/" itemprop="url">network-protocal-tcp</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:27:51+08:00">
-                2018-09-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T13:21:41+08:00">
+                2018-10-10
               </time>
             
 
@@ -597,7 +735,21 @@
       
         
           
-            
+            <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p><pre></pre></p>
+<ul>
+<li>redundancy/failover: 冗余，故障转移</li>
+<li>HA： 高可用</li>
+<li>load-balance：负载均衡</li>
+<li>cluster： 集群</li>
+<li>master/slave: 主从<br><blockquote>
+</blockquote>
+The primary purpose of load balancing is to distribute the work load of an application onto multiple computers, so the application can process a higher work load. Load balancing is a way to scale an application.<blockquote>
+</blockquote>
+A secondary goal of load balancing is often (but not always) to provide redundancy in your application. That is, if one server in a cluster of servers fail, the load balancer can temporarily remove that server from the cluster, and divide the load onto the functioning servers. Having multiple servers help each other in this way is typically called “redundancy”. When an error happens and the tasks is moved from the failing server to a functioning server, this is typically called “failover”.<blockquote>
+</blockquote>
+A set of servers running the same application in cooperation is typically referred to as a “cluster” of servers. The purpose of a cluster is typically both of the above two mentioned goals: To distribute load onto different servers, and to provide redundancy / failover for each other.</li>
+</ul>
+
           
         
       
@@ -645,7 +797,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/network-protocal-http/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/10/java-proxy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -664,7 +816,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/27/network-protocal-http/" itemprop="url">network-protocal-http</a></h1>
+                <a class="post-title-link" href="/2018/10/10/java-proxy/" itemprop="url">java-proxy</a></h1>
         
 
         <div class="post-meta">
@@ -676,8 +828,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:27:48+08:00">
-                2018-09-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-10T11:03:25+08:00">
+                2018-10-10
               </time>
             
 
@@ -764,7 +916,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/java-socket/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/08/java-annotation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -783,7 +935,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/27/java-socket/" itemprop="url">java-socket</a></h1>
+                <a class="post-title-link" href="/2018/10/08/java-annotation/" itemprop="url">java-annotation</a></h1>
         
 
         <div class="post-meta">
@@ -795,8 +947,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:27:12+08:00">
-                2018-09-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-08T10:41:53+08:00">
+                2018-10-08
               </time>
             
 
@@ -883,7 +1035,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/java-spring-ioc/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/07/api-signature/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -902,7 +1054,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/27/java-spring-ioc/" itemprop="url">java-spring-ioc</a></h1>
+                <a class="post-title-link" href="/2018/10/07/api-signature/" itemprop="url">接口签名</a></h1>
         
 
         <div class="post-meta">
@@ -914,8 +1066,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:26:26+08:00">
-                2018-09-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-07T22:13:42+08:00">
+                2018-10-07
               </time>
             
 
@@ -1002,7 +1154,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/java-spring-aop/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/07/restful/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -1021,7 +1173,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/27/java-spring-aop/" itemprop="url">java-spring-aop</a></h1>
+                <a class="post-title-link" href="/2018/10/07/restful/" itemprop="url">谈restful</a></h1>
         
 
         <div class="post-meta">
@@ -1033,8 +1185,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:26:23+08:00">
-                2018-09-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-07T22:12:02+08:00">
+                2018-10-07
               </time>
             
 
@@ -1121,7 +1273,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/java-threadPool/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/05/spring-cloud-zookeeper/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -1140,7 +1292,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/27/java-threadPool/" itemprop="url">java-threadPool</a></h1>
+                <a class="post-title-link" href="/2018/10/05/spring-cloud-zookeeper/" itemprop="url">spring-cloud-zookeeper</a></h1>
         
 
         <div class="post-meta">
@@ -1152,8 +1304,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:25:50+08:00">
-                2018-09-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-05T23:31:45+08:00">
+                2018-10-05
               </time>
             
 
@@ -1192,7 +1344,10 @@
       
         
           
-            
+            <p>Spring cloud官方不仅支持netflix的eureka来完成服务注册和发现，也支持Apache zk,这点和Dubbo一样。</p>
+<h3 id="zk"><a href="#zk" class="headerlink" title="zk"></a>zk</h3><p><a href="https://zookeeper.apache.org/doc/current/index.html" target="_blank" rel="noopener">官方</a>说是构建分布式应用的协调组件，其数据模型采用树形存储。</p>
+<p>### </p>
+
           
         
       
@@ -1240,7 +1395,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/java-async/">
+    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/10/05/spring-cloud-config/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Xu He">
@@ -1259,7 +1414,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/09/27/java-async/" itemprop="url">java-async</a></h1>
+                <a class="post-title-link" href="/2018/10/05/spring-cloud-config/" itemprop="url">spring-cloud-config</a></h1>
         
 
         <div class="post-meta">
@@ -1271,127 +1426,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:25:39+08:00">
-                2018-09-27
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://blog.lovezhangli.top/2018/09/27/java-HashMap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Xu He">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/xuhe.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Xu He's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/27/java-HashMap/" itemprop="url">java-HashMap</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:25:13+08:00">
-                2018-09-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-05T22:06:11+08:00">
+                2018-10-05
               </time>
             
 
@@ -1469,7 +1505,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1517,7 +1553,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">43</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
@@ -1530,7 +1566,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
@@ -1602,7 +1638,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
